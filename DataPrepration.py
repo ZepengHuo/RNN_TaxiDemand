@@ -15,7 +15,8 @@ import matplotlib.pyplot as plt # this is used for the plot the graph
 def parse(x):
 	return datetime.strptime(x, '%Y %m %d %H')
 print('Current working directory ',os.getcwd())
-os.chdir("/Users/Apoorb/Documents/GitHub/RNN_TaxiDemand")
+#os.chdir("/Users/Apoorb/Documents/GitHub/RNN_TaxiDemand")
+os.chdir("C:\\Users\\a-bibeka\\Documents\\GitHub\\RNN_TaxiDemand")
 print('Current working directory ',os.getcwd())
 
 # load data
@@ -60,18 +61,19 @@ df['NumTrips'].resample('M').mean().plot(kind='bar')
 
 
 
-for i in range(0,169):
+for i in range(1,169):
     buf="NumTrip_"+str(i)
     df[buf]=df.NumTrips.shift(i)
 
-df=df.drop(["NumTrips"],axis=1)
-Ydf=df['NumTrip_0'].resample('W', how='sum')
-
+Ydf=df['NumTrips'].resample('W', how='sum')
+df=df.drop(columns="NumTrips")
 Ydf=Ydf[(Ydf.index>=str(d)) & (Ydf.index<str(d2))]
 
 Ydf=Ydf.rename("Y")
 Ydf=Ydf.shift(1,freq='D')
 Ydf=pd.DataFrame(Ydf)
+Ydf["Y"]=Ydf.Y.shift(-1)
+Ydf=Ydf.dropna()
 
 Ydf1=Ydf.merge(df,'left',left_index=True, right_index=True)
 Ydf1.sort_index()
