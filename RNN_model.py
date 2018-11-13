@@ -4,7 +4,7 @@ Created on Wed Nov  7 13:26:08 2018
 
 @author: A-Bibeka
 """
-
+%reset -f
 
 import os
 import pandas as pd
@@ -28,7 +28,8 @@ from keras.layers import LSTM
 from keras.layers import Dropout
 
 print('Current working directory ',os.getcwd())
-os.chdir("C:\\Users\\a-bibeka\\Documents\\GitHub\\RNN_TaxiDemand")
+#os.chdir("C:\\Users\\a-bibeka\\Documents\\GitHub\\RNN_TaxiDemand")"
+os.chdir("/Users/Apoorb/Documents/GitHub/RNN_TaxiDemand")
 print('Current working directory ',os.getcwd())
 
 # load data
@@ -36,6 +37,9 @@ df = pd.read_csv('RNN_data.csv',index_col=0,parse_dates=True)
 #df=df.drop(columns="NumTrip_0")
 # split into train and test sets
 values = df.values
+
+#Check if the data is correct
+Check_df=pd.DataFrame({"Y":df.Y,"Y-t":df.iloc[:,1:].sum(axis=1)})
 
 n_train_time = int(np.floor(0.8*df.shape[0]))
 train = values[:n_train_time, :]
@@ -55,10 +59,11 @@ print(train_X.shape, train_y.shape, test_X.shape, test_y.shape)
 # design network
 model = Sequential()
 model.add(LSTM(50, input_shape=(train_X.shape[1], train_X.shape[2])))
+model.add(LSTM(250))
 model.add(Dense(1))
 model.compile(loss='mae', optimizer='adam')
 # fit network
-history = model.fit(train_X, train_y, epochs=50, batch_size=72, validation_data=(test_X, test_y), verbose=2, shuffle=False)
+history = model.fit(train_X, train_y, epochs=200, batch_size=72, validation_data=(test_X, test_y), verbose=2, shuffle=False)
 
 # summarize history for loss
 plt.plot(history.history['loss'])
